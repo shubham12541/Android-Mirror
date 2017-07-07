@@ -5,50 +5,11 @@
     android:background="#0099cc"
     tools:context="com.tominc.mirror.MainActivity">
 
-    <LinearLayout
-        android:id="@+id/mirror_content"
-        android:orientation="vertical"
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/pager"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent" />
 
-        <LinearLayout
-            android:weightSum="2"
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <FrameLayout
-                android:layout_weight="1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <include
-                    layout="@layout/weather_layout" />
-
-            </FrameLayout>
-
-            <FrameLayout
-                android:layout_weight="1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <include
-                    layout="@layout/calender_layout" />
-
-            </FrameLayout>
-
-        </LinearLayout>
-
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <include
-                layout="@layout/news_layout" />
-
-        </FrameLayout>
-
-
-    </LinearLayout>
 
 </FrameLayout>
