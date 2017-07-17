@@ -5,6 +5,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
 import com.tominc.mirror.fragments.CalenderFragment;
+import com.tominc.mirror.fragments.MusicFragment;
 import com.tominc.mirror.fragments.NewsFragment;
 import com.tominc.mirror.fragments.WeatherFragment;
 
@@ -29,6 +30,8 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
                 return new NewsFragment();
             case 2:
                 return new CalenderFragment();
+            case 3:
+                return new MusicFragment();
             default:
                 return new WeatherFragment();
         }

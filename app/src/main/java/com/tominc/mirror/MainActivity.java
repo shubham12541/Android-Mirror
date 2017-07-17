@@ -111,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
     };
 
 
-    private static final int NUM_PAGES = 3;
+    private static final int NUM_PAGES = 4;
     ViewPager viewPager;
     ViewPagerAdapter mPageAdapter;
 
@@ -128,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         mVisible = true;
-        mContentView = findViewById(R.id.mirror_content);
+//        mContentView = findViewById(R.id.mirror_content);
 
     }
 
