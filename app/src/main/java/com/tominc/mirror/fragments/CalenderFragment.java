@@ -1,10 +1,13 @@
 package com.tominc.mirror.fragments;
 
-import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +21,7 @@ import com.tominc.mirror.Utility;
 import java.util.Calendar;
 import java.util.List;
 
+import de.mateware.snacky.Snacky;
 import it.macisamuele.calendarprovider.EventInfo;
 
 /**
@@ -27,6 +31,9 @@ import it.macisamuele.calendarprovider.EventInfo;
 public class CalenderFragment extends Fragment {
     TextView agenda_list;
     Utility utility;
+
+    private static final String TAG = "CalenderFragment";
+    private static final int CALENDER_PERMISSION = 102;
 
     public CalenderFragment(){
     }
@@ -44,7 +51,15 @@ public class CalenderFragment extends Fragment {
         ViewGroup root = (ViewGroup) inflater.inflate(R.layout.calender_layout, container, false);
 
         agenda_list = (TextView) root.findViewById(R.id.agenda_list);
-        fetchCalender();
+
+        int result = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_CALENDAR);
+        int result2 = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_CALENDAR);
+
+        if(result == PackageManager.PERMISSION_GRANTED && result2 == PackageManager.PERMISSION_GRANTED){
+            fetchCalender();
+        } else{
+            ActivityCompat.requestPermissions(getActivity(), new String[]{ Manifest.permission.WRITE_CALENDAR, Manifest.permission.READ_CALENDAR}, CALENDER_PERMISSION);
+        }
         return root;
     }
 
@@ -54,6 +69,23 @@ public class CalenderFragment extends Fragment {
         } else{
             agenda_list.setText(Html.fromHtml(text));
         }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode){
+            case CALENDER_PERMISSION:
+                if(grantResults[0]==PackageManager.PERMISSION_GRANTED && grantResults[1]==PackageManager.PERMISSION_GRANTED){
+                    fetchCalender();
+                } else{
+                    Snacky.builder()
+                            .setText("Permission Denied")
+                            .setActivty(getActivity())
+                            .warning()
+                            .show();
+                }
+        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     private void fetchCalender(){
