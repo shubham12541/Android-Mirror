@@ -122,13 +122,13 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
-        viewPager = (ViewPager) findViewById(R.id.pager);
+        viewPager = (ViewPager) findViewById(R.id.view_pager);
         mPageAdapter = new ViewPagerAdapter(getSupportFragmentManager(), NUM_PAGES);
         viewPager.setAdapter(mPageAdapter);
 
 
         mVisible = true;
-        mContentView = findViewById(R.id.mirror_content);
+        mContentView = findViewById(R.id.view_pager);
 
     }
 
@@ -157,7 +157,7 @@ public class MainActivity extends AppCompatActivity {
         if (actionBar != null) {
             actionBar.hide();
         }
-        mControlsView.setVisibility(View.GONE);
+//        mControlsView.setVisibility(View.GONE);
         mVisible = false;
 
         // Schedule a runnable to remove the status and navigation bar after a delay

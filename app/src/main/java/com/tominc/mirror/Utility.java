@@ -1,6 +1,7 @@
 package com.tominc.mirror;
 
 import android.content.Context;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -22,7 +23,7 @@ import org.json.JSONObject;
 
 public class Utility {
     public static Utility mInstance;
-    Context mContext;
+    private Context mContext;
     private RequestQueue rq;
     private static final String TAG = "Utility";
 
@@ -69,7 +70,7 @@ public class Utility {
 
     public RequestQueue getRequestQueue(){
         if(rq==null){
-            rq = Volley.newRequestQueue(mContext.getApplicationContext());
+            rq = Volley.newRequestQueue(mContext);
         }
         return rq;
     }

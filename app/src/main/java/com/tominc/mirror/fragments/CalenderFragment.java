@@ -1,5 +1,6 @@
 package com.tominc.mirror.fragments;
 
+import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -28,7 +29,13 @@ public class CalenderFragment extends Fragment {
     Utility utility;
 
     public CalenderFragment(){
-        utility = Utility.getInstance(getActivity().getApplicationContext());
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        utility = Utility.getInstance(getActivity());
+
     }
 
     @Nullable
