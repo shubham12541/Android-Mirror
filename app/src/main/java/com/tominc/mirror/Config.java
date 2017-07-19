@@ -16,7 +16,10 @@ public class Config {
 
     public static final String APP_FOLDER = Environment.getExternalStorageDirectory().getPath() + "/SmartMirror";
     public static final String MUSIC_FOLDER = APP_FOLDER + "/music";
+
     // change the source to the-hindu for indian news
+
+    public static final String KEYPHRASE = "smart mirror";
 
 
 }
