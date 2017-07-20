@@ -99,12 +99,19 @@ public class WeatherFragment extends Fragment {
         });
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Glide.with(getActivity()).pauseRequests();
+    }
+
     private void getWeather(IpLocation location){
         utility.jsonObjectRequest(Config.GET_WEATHER_URL_BASE + location.getLoc() + ".json", new VolleyCallback() {
             @Override
-            public void onSuccess(JSONObject response) {
+            public void onSuccess(JSONObject res) {
                 Weather weather = new Weather();
                 try {
+                    JSONObject response = res.getJSONObject("current_observation");
                     JSONObject observationData = response.getJSONObject("observation_location");
                     weather.setOb_full(observationData.getString("full"));
                     weather.setOb_city(observationData.getString("city"));

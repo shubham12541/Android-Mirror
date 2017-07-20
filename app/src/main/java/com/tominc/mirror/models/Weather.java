@@ -257,6 +257,10 @@ public class Weather {
     }
 
     public void setWindchill_c(String windchill_c) {
+        if(windchill_c.equals("NA")){
+            this.windchill_c = 0;
+            return;
+        }
         this.windchill_c = Integer.valueOf(windchill_c);
     }
 }

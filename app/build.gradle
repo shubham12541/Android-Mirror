@@ -47,5 +47,8 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.0.0-RC1'
     compile 'it.macisamuele:calendarprovider-lib:0.0.1'
     compile 'io.github.jeancsanchez.jcplayer:jcplayer:2.6.0-alpha'
+
+    compile project(':pocketsphinx-android-5prealpha-release')
+
     testCompile 'junit:junit:4.12'
 }

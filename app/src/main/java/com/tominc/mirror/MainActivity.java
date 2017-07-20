@@ -5,8 +5,6 @@ import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.speech.RecognitionListener;
-import android.speech.SpeechRecognizer;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -42,6 +40,10 @@ import java.util.HashMap;
 import java.util.List;
 
 import de.mateware.snacky.Snacky;
+import edu.cmu.pocketsphinx.Assets;
+import edu.cmu.pocketsphinx.Hypothesis;
+import edu.cmu.pocketsphinx.RecognitionListener;
+import edu.cmu.pocketsphinx.SpeechRecognizerSetup;
 import it.macisamuele.calendarprovider.CalendarInfo;
 import it.macisamuele.calendarprovider.EventInfo;
 
@@ -137,7 +139,7 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
 
     private static final String KEYPHRASE = Config.KEYPHRASE;
 
-    private SpeechRecognizer recognizer;
+    private edu.cmu.pocketsphinx.SpeechRecognizer recognizer;
     private HashMap<String, Integer> captions;
 
     @Override
@@ -181,7 +183,7 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
             @Override
             protected Exception doInBackground(Void... params) {
                 try {
-                    Assets assets = new Assets(PocketSphinxActivity.this);
+                    Assets assets = new Assets(MainActivity.this);
                     File assetDir = assets.syncAssets();
                     setupRecognizer(assetDir);
                 } catch (IOException e) {
@@ -193,8 +195,10 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
             @Override
             protected void onPostExecute(Exception result) {
                 if (result != null) {
-                    ((TextView) findViewById(R.id.caption_text))
-                            .setText("Failed to init recognizer " + result);
+                    Snacky.builder()
+                            .setActivty(MainActivity.this)
+                            .setText("Failed to init recognizer" + result)
+                            .warning().show();
                 } else {
                     switchSearch(KWS_SEARCH);
                 }
@@ -212,7 +216,12 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
             recognizer.startListening(searchName, 10000);
 
         String caption = getResources().getString(captions.get(searchName));
-        ((TextView) findViewById(R.id.caption_text)).setText(caption);
+        Snacky.builder()
+                .setText(caption)
+                .setActivty(MainActivity.this)
+                .success()
+                .show();
+//        ((TextView) findViewById(R.id.caption_text)).setText(caption);
     }
 
     private void setupRecognizer(File assetsDir) throws IOException {
@@ -271,7 +280,7 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
 
         if (recognizer != null) {
             recognizer.cancel();
-            recognizer.destroy();
+            recognizer.shutdown();
         }
     }
 
@@ -337,10 +346,6 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
         mHideHandler.postDelayed(mHideRunnable, delayMillis);
     }
 
-    @Override
-    public void onReadyForSpeech(Bundle params) {
-
-    }
 
     @Override
     public void onBeginningOfSpeech() {
@@ -348,37 +353,46 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
     }
 
     @Override
-    public void onRmsChanged(float rmsdB) {
-
-    }
-
-    @Override
-    public void onBufferReceived(byte[] buffer) {
-
-    }
-
-    @Override
     public void onEndOfSpeech() {
+        if(!recognizer.getSearchName().equals(KWS_SEARCH)){
+            switchSearch(KWS_SEARCH);
+        }
+    }
+
+    @Override
+    public void onPartialResult(Hypothesis hypothesis) {
+        if(hypothesis == null) return;
+
+        String text = hypothesis.getHypstr();
+        Snacky.builder().setActivty(MainActivity.this).setText(text).success().show();
+
+        if(text.equals(KEYPHRASE)) switchSearch(MENU_SEARCH);
+        else if(text.equals(DIGITS_SEARCH)) switchSearch(DIGITS_SEARCH);
+        else if(text.equals(PHONE_SEARCH)) switchSearch((PHONE_SEARCH));
+        else if(text.equals(FORECAST_SEARCH)) switchSearch(FORECAST_SEARCH);
+        else {
+            Snacky.builder().setActivty(MainActivity.this).setText(text).success().show();
+        }
+    }
+
+    @Override
+    public void onResult(Hypothesis hypothesis) {
+        if(hypothesis!=null){
+            String text = hypothesis.getHypstr();
+            Snacky.builder()
+                    .setActivty(MainActivity.this)
+                    .setText(text)
+                    .success().show();
+        }
+    }
+
+    @Override
+    public void onError(Exception e) {
 
     }
 
     @Override
-    public void onError(int error) {
-
-    }
-
-    @Override
-    public void onResults(Bundle results) {
-
-    }
-
-    @Override
-    public void onPartialResults(Bundle partialResults) {
-
-    }
-
-    @Override
-    public void onEvent(int eventType, Bundle params) {
+    public void onTimeout() {
 
     }
 }
