@@ -9,7 +9,7 @@ public class Weather {
     private String weather, temp_string, relative_humidity, wind_string, wind_dir, wind_degrees, pressure_mb, pressure_in, pressure_trend,
                         windchill_string, feelslike_c, visibility_km, solar_radiation, UV, precip_today_in, icon, icon_url;
 
-    private int temp_c, wind_mph, wind_kph, dewpoint_c, heat_index_c, windchill_c;
+    private double temp_c, wind_mph, wind_kph, dewpoint_c, heat_index_c, windchill_c;
 
 
     public String getOb_full() {
@@ -212,47 +212,47 @@ public class Weather {
         this.icon_url = icon_url;
     }
 
-    public int getTemp_c() {
+    public double getTemp_c() {
         return temp_c;
     }
 
     public void setTemp_c(String temp_c) {
-        this.temp_c = Integer.valueOf(temp_c);
+        this.temp_c = Double.parseDouble(temp_c);
     }
 
-    public int getWind_mph() {
+    public double getWind_mph() {
         return wind_mph;
     }
 
     public void setWind_mph(String wind_mph) {
-        this.wind_mph = Integer.valueOf(wind_mph);
+        this.wind_mph = Double.parseDouble(wind_mph);
     }
 
-    public int getWind_kph() {
+    public double getWind_kph() {
         return wind_kph;
     }
 
     public void setWind_kph(String wind_kph) {
-        this.wind_kph = Integer.valueOf(wind_kph);
+        this.wind_kph = Double.parseDouble(wind_kph);
     }
 
-    public int getDewpoint_c() {
+    public double getDewpoint_c() {
         return dewpoint_c;
     }
 
     public void setDewpoint_c(String dewpoint_c) {
-        this.dewpoint_c = Integer.valueOf(dewpoint_c);
+        this.dewpoint_c = Double.parseDouble(dewpoint_c);
     }
 
-    public int getHeat_index_c() {
+    public double getHeat_index_c() {
         return heat_index_c;
     }
 
     public void setHeat_index_c(String heat_index_c) {
-        this.heat_index_c = Integer.valueOf(heat_index_c);
+        this.heat_index_c = Double.parseDouble(heat_index_c);
     }
 
-    public int getWindchill_c() {
+    public double getWindchill_c() {
         return windchill_c;
     }
 
@@ -261,6 +261,6 @@ public class Weather {
             this.windchill_c = 0;
             return;
         }
-        this.windchill_c = Integer.valueOf(windchill_c);
+        this.windchill_c = Double.parseDouble(windchill_c);
     }
 }
