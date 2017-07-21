@@ -8,6 +8,7 @@ import com.tominc.mirror.fragments.CalenderFragment;
 import com.tominc.mirror.fragments.MusicFragment;
 import com.tominc.mirror.fragments.NewsFragment;
 import com.tominc.mirror.fragments.WeatherFragment;
+import com.tominc.mirror.models.Weather;
 
 /**
  * Created by shubham on 08/07/17.
@@ -25,15 +26,15 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
     public Fragment getItem(int position) {
         switch (position){
             case 0:
-                return new WeatherFragment();
+                return WeatherFragment.newInstance();
             case 1:
-                return new NewsFragment();
+                return NewsFragment.newInstance();
             case 2:
-                return new CalenderFragment();
+                return CalenderFragment.newInstance();
             case 3:
-                return new MusicFragment();
+                return MusicFragment.newInstance();
             default:
-                return new WeatherFragment();
+                return null;
         }
     }
 

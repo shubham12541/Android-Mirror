@@ -1,5 +1,6 @@
 package com.tominc.mirror.fragments;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.Nullable;
@@ -28,7 +29,19 @@ public class MusicFragment extends Fragment implements JcPlayerService.JcPlayerS
     Utility utility;
     JcPlayerView player;
 
-    public MusicFragment(){
+
+    public static MusicFragment newInstance() {
+
+        Bundle args = new Bundle();
+
+        MusicFragment fragment = new MusicFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
         utility = Utility.getInstance(getActivity().getApplicationContext());
     }
 

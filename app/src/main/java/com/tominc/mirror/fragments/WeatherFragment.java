@@ -35,7 +35,14 @@ public class WeatherFragment extends Fragment {
     Utility utility;
     private static final String TAG = "WeatherFragment";
 
-    public WeatherFragment(){
+
+    public static WeatherFragment newInstance() {
+        
+        Bundle args = new Bundle();
+        
+        WeatherFragment fragment = new WeatherFragment();
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Override
@@ -102,7 +109,6 @@ public class WeatherFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Glide.with(getActivity()).pauseRequests();
     }
 
     private void getWeather(IpLocation location){
@@ -166,15 +172,18 @@ public class WeatherFragment extends Fragment {
     }
 
     private void showWeatheronUI(Weather weather){
-        Glide.with(getActivity())
-                .load(weather.getIcon_url())
-                .into(weather_image);
+        if(!this.isDetached()){
+            Glide.with((Fragment)this)
+                    .load(weather.getIcon_url())
+                    .into(weather_image);
+
+        }
 
         weather_des.setText(weather.getWeather());
-        weather_temp.setText(weather.getTemp_c() + "");
+        weather_temp.setText(weather.getTemp_c() + "˚C");
         weather_wind.setText(weather.getWind_string());
         weather_humidity.setText("Humidity: " + weather.getRelative_humidity());
-        weather_visibility.setText(weather.getVisibility_km());
+        weather_visibility.setText(weather.getVisibility_km() + " Km");
         weather_elevation.setText(weather.getOb_elevation());
     }
 }

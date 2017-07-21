@@ -38,7 +38,14 @@ public class CalenderFragment extends Fragment {
     private static final String TAG = "CalenderFragment";
     private static final int CALENDER_PERMISSION = 102;
 
-    public CalenderFragment(){
+
+    public static CalenderFragment newInstance() {
+
+        Bundle args = new Bundle();
+
+        CalenderFragment fragment = new CalenderFragment();
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Override

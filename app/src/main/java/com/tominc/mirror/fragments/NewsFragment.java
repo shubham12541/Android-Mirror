@@ -31,7 +31,14 @@ public class NewsFragment extends Fragment {
     TextView news_list;
     Utility utility;
 
-    public NewsFragment(){
+
+    public static NewsFragment newInstance() {
+
+        Bundle args = new Bundle();
+
+        NewsFragment fragment = new NewsFragment();
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Override
