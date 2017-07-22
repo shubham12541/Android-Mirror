@@ -24,8 +24,8 @@
             <ImageView
                 tools:src="@mipmap/ic_launcher"
                 android:id="@+id/weather_image"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_width="100dp"
+                android:layout_height="100dp" />
 
             <TextView
                 android:padding="1dp"

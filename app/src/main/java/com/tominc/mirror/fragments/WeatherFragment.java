@@ -67,6 +67,7 @@ public class WeatherFragment extends Fragment {
         weather_humidity  = (TextView) root.findViewById(R.id.weather_humidity);
         weather_visibility  = (TextView) root.findViewById(R.id.weather_visibility);
 
+
         getLocation();
 
         return root;
@@ -183,7 +184,7 @@ public class WeatherFragment extends Fragment {
         weather_temp.setText(weather.getTemp_c() + "˚C");
         weather_wind.setText(weather.getWind_string());
         weather_humidity.setText("Humidity: " + weather.getRelative_humidity());
-        weather_visibility.setText(weather.getVisibility_km() + " Km");
+        weather_visibility.setText("Visibility: " + weather.getVisibility_km() + " Km");
         weather_elevation.setText(weather.getOb_elevation());
     }
 }

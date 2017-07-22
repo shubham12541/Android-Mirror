@@ -3,6 +3,7 @@
     android:id="@+id/main_content"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#000000"
     tools:context="com.tominc.mirror.MainActivity">
 
     <android.support.v4.view.ViewPager
