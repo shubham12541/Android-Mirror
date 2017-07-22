@@ -15,6 +15,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Html;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
@@ -62,26 +63,23 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
 
     RelativeLayout mContentView;
 
-    private TextToSpeech tts;
+    private static final String TAG = "MainActivity";
 
+    private TextToSpeech tts;
 
     private static final int NUM_PAGES = 4;
     ViewPager viewPager;
     ViewPagerAdapter mPageAdapter;
 
-
     /* Named searches allow to quickly reconfigure the decoder */
     private static final String KWS_SEARCH = "wakeup";
-    private static final String FORECAST_SEARCH = "forecast";
-    private static final String DIGITS_SEARCH = "digits";
-    private static final String PHONE_SEARCH = "phones";
     private static final String MENU_SEARCH = "menu";
+
     private static final int REQUEST_AUDIO = 32;
 
     private static final String KEYPHRASE = Config.KEYPHRASE;
 
     private edu.cmu.pocketsphinx.SpeechRecognizer recognizer;
-    private HashMap<String, Integer> captions;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,12 +105,6 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
             actionBar.hide();
         }
 
-        captions = new HashMap<String, Integer>();
-        captions.put(KWS_SEARCH, R.string.kws_caption);
-        captions.put(MENU_SEARCH, R.string.menu_caption);
-        captions.put(DIGITS_SEARCH, R.string.digits_caption);
-        captions.put(PHONE_SEARCH, R.string.phone_caption);
-        captions.put(FORECAST_SEARCH, R.string.forecast_caption);
 
         mPageAdapter = new ViewPagerAdapter(getSupportFragmentManager(), NUM_PAGES);
         viewPager.setPageTransformer(true, new ZoomOutPageTransformer());
@@ -159,18 +151,30 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
         }.execute();
     }
 
+    private void toggleSearch(int MODE){
+        recognizer.stop();
+
+        if(MODE==1){
+            recognizer.startListening(KWS_SEARCH);
+        }
+
+    }
+
     private void switchSearch(String searchName) {
         recognizer.stop();
+
+        Log.d(TAG, "switchSearch: " + searchName);
 
         // If we are not spotting, start listening with timeout (10000 ms or 10 seconds).
         if (searchName.equals(KWS_SEARCH))
             recognizer.startListening(searchName);
-        else
+        else{
             recognizer.startListening(searchName, 10000);
+            speakOut("Hello");
+        }
 
-        String caption = getResources().getString(captions.get(searchName));
         Snacky.builder()
-                .setText(caption)
+                .setText(searchName)
                 .setActivty(MainActivity.this)
                 .success()
                 .show();
@@ -196,9 +200,9 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
         // Create keyword-activation search.
         recognizer.addKeyphraseSearch(KWS_SEARCH, KEYPHRASE);
 
-//        // Create grammar-based search for selection between demos
-//        File menuGrammar = new File(assetsDir, "menu.gram");
-//        recognizer.addGrammarSearch(MENU_SEARCH, menuGrammar);
+        // Create grammar-based search for selection between demos
+        File menuGrammar = new File(assetsDir, "menu.gram");
+        recognizer.addGrammarSearch(MENU_SEARCH, menuGrammar);
 //
 //        // Create grammar-based search for digit recognition
 //        File digitsGrammar = new File(assetsDir, "digits.gram");
@@ -252,8 +256,6 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
         }
     }
 
-
-
     @Override
     public void onBeginningOfSpeech() {
 
@@ -270,22 +272,34 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
     public void onPartialResult(Hypothesis hypothesis) {
         if(hypothesis == null) return;
 
+
         String text = hypothesis.getHypstr();
-        Snacky.builder().setActivty(MainActivity.this).setText(text).success().show();
+        Log.d(TAG, "onPartialResult: " + text);
+//        Snacky.builder().setActivty(MainActivity.this).setText(text).success().show();
 
         if(text.equals(KEYPHRASE)) switchSearch(MENU_SEARCH);
-        else if(text.equals(DIGITS_SEARCH)) switchSearch(DIGITS_SEARCH);
-        else if(text.equals(PHONE_SEARCH)) switchSearch((PHONE_SEARCH));
-        else if(text.equals(FORECAST_SEARCH)) switchSearch(FORECAST_SEARCH);
-        else {
-            Snacky.builder().setActivty(MainActivity.this).setText(text).success().show();
+        else{
+            Snacky.builder()
+                    .setActivty(MainActivity.this)
+                    .setText(text)
+                    .success().show();
         }
+
+//        if(text.equals(KEYPHRASE)) switchSearch(MENU_SEARCH);
+//        else if(text.equals(DIGITS_SEARCH)) switchSearch(DIGITS_SEARCH);
+//        else if(text.equals(PHONE_SEARCH)) switchSearch((PHONE_SEARCH));
+//        else if(text.equals(FORECAST_SEARCH)) switchSearch(FORECAST_SEARCH);
+//        else {
+//            Snacky.builder().setActivty(MainActivity.this).setText(text).success().show();
+//        }
     }
 
     @Override
     public void onResult(Hypothesis hypothesis) {
         if(hypothesis!=null){
             String text = hypothesis.getHypstr();
+            Log.d(TAG, "onResult: " + text);
+
             Snacky.builder()
                     .setActivty(MainActivity.this)
                     .setText(text)
