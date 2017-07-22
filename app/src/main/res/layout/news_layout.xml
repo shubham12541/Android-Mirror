@@ -20,8 +20,9 @@
         android:id="@+id/news_list"
         tools:text="News1\nNews2"
         android:layout_marginTop="8dp"
+
         tools:textColor="#000000"
-        android:lineSpacingMultiplier="1.2"
+        android:lineSpacingMultiplier="1.5"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 

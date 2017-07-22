@@ -185,6 +185,6 @@ public class WeatherFragment extends Fragment {
         weather_wind.setText(weather.getWind_string());
         weather_humidity.setText("Humidity: " + weather.getRelative_humidity());
         weather_visibility.setText("Visibility: " + weather.getVisibility_km() + " Km");
-        weather_elevation.setText(weather.getOb_elevation());
+        weather_elevation.setText("ELevation: " + weather.getOb_elevation());
     }
 }

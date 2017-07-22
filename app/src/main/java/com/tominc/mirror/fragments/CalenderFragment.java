@@ -116,6 +116,7 @@ public class CalenderFragment extends Fragment {
         for(EventInfo event: tomEvents){
             agenda_text += event.getTitle() + "<br>";
         }
+        showAgendaOnUI(agenda_text);
 
     }
 }

@@ -5,6 +5,7 @@ import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.speech.tts.TextToSpeech;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -33,6 +34,7 @@ import com.tominc.mirror.models.Weather;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.io.File;
 import java.io.IOException;
@@ -41,6 +43,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 import de.mateware.snacky.Snacky;
 import edu.cmu.pocketsphinx.Assets;
@@ -54,10 +57,12 @@ import it.macisamuele.calendarprovider.EventInfo;
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
  */
-public class MainActivity extends AppCompatActivity implements RecognitionListener {
+public class MainActivity extends AppCompatActivity implements RecognitionListener, TextToSpeech.OnInitListener {
     Utility utility;
 
     RelativeLayout mContentView;
+
+    private TextToSpeech tts;
 
 
     private static final int NUM_PAGES = 4;
@@ -82,8 +87,9 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_main);
+        tts = new TextToSpeech(this, this);
 
+        setContentView(R.layout.activity_main);
 
         mContentView = (RelativeLayout) findViewById(R.id.main_content);
         viewPager = (ViewPager) findViewById(R.id.view_pager);
@@ -119,9 +125,9 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
         } else{
             runRecognizerSetup();
         }
-
-
     }
+
+
 
     private void runRecognizerSetup() {
         // Recognizer initialization is a time-consuming and it involves IO,
@@ -168,7 +174,6 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
                 .setActivty(MainActivity.this)
                 .success()
                 .show();
-//        ((TextView) findViewById(R.id.caption_text)).setText(caption);
     }
 
     private void setupRecognizer(File assetsDir) throws IOException {
@@ -191,21 +196,21 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
         // Create keyword-activation search.
         recognizer.addKeyphraseSearch(KWS_SEARCH, KEYPHRASE);
 
-        // Create grammar-based search for selection between demos
-        File menuGrammar = new File(assetsDir, "menu.gram");
-        recognizer.addGrammarSearch(MENU_SEARCH, menuGrammar);
-
-        // Create grammar-based search for digit recognition
-        File digitsGrammar = new File(assetsDir, "digits.gram");
-        recognizer.addGrammarSearch(DIGITS_SEARCH, digitsGrammar);
-
-        // Create language model search
-        File languageModel = new File(assetsDir, "weather.dmp");
-        recognizer.addNgramSearch(FORECAST_SEARCH, languageModel);
-
-        // Phonetic search
-        File phoneticModel = new File(assetsDir, "en-phone.dmp");
-        recognizer.addAllphoneSearch(PHONE_SEARCH, phoneticModel);
+//        // Create grammar-based search for selection between demos
+//        File menuGrammar = new File(assetsDir, "menu.gram");
+//        recognizer.addGrammarSearch(MENU_SEARCH, menuGrammar);
+//
+//        // Create grammar-based search for digit recognition
+//        File digitsGrammar = new File(assetsDir, "digits.gram");
+//        recognizer.addGrammarSearch(DIGITS_SEARCH, digitsGrammar);
+//
+//        // Create language model search
+//        File languageModel = new File(assetsDir, "weather.dmp");
+//        recognizer.addNgramSearch(FORECAST_SEARCH, languageModel);
+//
+//        // Phonetic search
+//        File phoneticModel = new File(assetsDir, "en-phone.dmp");
+//        recognizer.addAllphoneSearch(PHONE_SEARCH, phoneticModel);
     }
 
     @Override
@@ -223,12 +228,19 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
 
         if (recognizer != null) {
             recognizer.cancel();
             recognizer.shutdown();
         }
+
+        if(tts!=null){
+            tts.stop();
+            tts.shutdown();
+        }
+
+        super.onDestroy();
+
     }
 
     @Override
@@ -289,5 +301,39 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
     @Override
     public void onTimeout() {
 
+    }
+
+    private void speakOut(String text){
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+            tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, null);
+        } else{
+            tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
+        }
+    }
+
+    @Override
+    public void onInit(int status) {
+        if(status == TextToSpeech.SUCCESS){
+            int result = tts.setLanguage(Locale.ENGLISH);
+
+            if(result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED){
+                result = tts.setLanguage(Locale.ENGLISH);
+            } else{
+                return;
+            }
+
+            if(result == TextToSpeech.LANG_NOT_SUPPORTED || result == TextToSpeech.LANG_MISSING_DATA){
+                Snacky.builder()
+                        .setActivty(MainActivity.this)
+                        .setText("Engligh language not supported")
+                        .error().show();
+                return;
+            }
+        } else{
+            Snacky.builder()
+                    .setActivty(MainActivity.this)
+                    .setText("Speech not availalbe")
+                    .error().show();
+        }
     }
 }

@@ -2,12 +2,14 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:padding="16dp"
+    android:layout_marginTop="8dp"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <TextView
         android:text="Agenda"
         android:textStyle="bold"
+        tools:textColor="#000000"
         android:textSize="20sp"
         android:paddingBottom="8dp"
         android:layout_width="match_parent"
@@ -16,8 +18,7 @@
     <TextView
         android:id="@+id/agenda_list"
         tools:text="Agenda1\nAgnda2"
-        android:gravity="center"
-        android:lineSpacingMultiplier="1.2"
+        android:lineSpacingMultiplier="1.5"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
