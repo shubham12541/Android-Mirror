@@ -31,6 +31,7 @@ import com.tominc.mirror.models.IpLocation;
 import com.tominc.mirror.models.News;
 import com.tominc.mirror.models.VolleyCallback;
 import com.tominc.mirror.models.Weather;
+import com.tominc.mirror.utils.SpeechRecognizerManager;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -40,6 +41,7 @@ import org.w3c.dom.Text;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -81,11 +83,14 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
 
     private edu.cmu.pocketsphinx.SpeechRecognizer recognizer;
 
+    private SpeechRecognizerManager mSpeechManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         tts = new TextToSpeech(this, this);
+
 
         setContentView(R.layout.activity_main);
 
@@ -151,13 +156,14 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
         }.execute();
     }
 
-    private void toggleSearch(int MODE){
-        recognizer.stop();
 
-        if(MODE==1){
-            recognizer.startListening(KWS_SEARCH);
+    @Override
+    protected void onPause() {
+        if(mSpeechManager!=null){
+            mSpeechManager.destroy();
+            mSpeechManager=null;
         }
-
+        super.onPause();
     }
 
     private void switchSearch(String searchName) {
@@ -268,6 +274,15 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
         }
     }
 
+    private void listen(){
+        if(mSpeechManager == null){
+            SetSpeechListener();
+        } else if(!mSpeechManager.ismIsListening()){
+            mSpeechManager.destroy();
+            SetSpeechListener();
+        }
+    }
+
     @Override
     public void onPartialResult(Hypothesis hypothesis) {
         if(hypothesis == null) return;
@@ -277,7 +292,8 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
         Log.d(TAG, "onPartialResult: " + text);
 //        Snacky.builder().setActivty(MainActivity.this).setText(text).success().show();
 
-        if(text.equals(KEYPHRASE)) switchSearch(MENU_SEARCH);
+        if(text.equals(KEYPHRASE)) listen();
+        else if(text.contains(KEYPHRASE)) listen();
         else{
             Snacky.builder()
                     .setActivty(MainActivity.this)
@@ -349,5 +365,76 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
                     .setText("Speech not availalbe")
                     .error().show();
         }
+    }
+
+    private void processSpeech(String text){
+        text = text.toLowerCase();
+        if(text.contains("music")){
+            Snacky.builder()
+                    .setActivty(MainActivity.this)
+                    .setText("Now Playing Song")
+                    .success().show();
+            viewPager.setCurrentItem(NUM_PAGES-1);
+        } else if(text.contains("news")){
+            Snacky.builder()
+                    .setActivty(MainActivity.this)
+                    .setText("Reading out news")
+                    .success().show();
+            speakOut("Current News are as follows");
+            viewPager.setCurrentItem(1);
+        } else if(text.contains("weather") || text.contains("rain")){
+            Snacky.builder()
+                    .setActivty(MainActivity.this)
+                    .setText("Reading current weather")
+                    .success().show();
+            speakOut("I think its going to rain today");
+            viewPager.setCurrentItem(0);
+        } else if(text.contains("calender") || text.contains("agenda")){
+            Snacky.builder()
+                    .setActivty(MainActivity.this)
+                    .setText("Showing today's agenda")
+                    .success().show();
+            speakOut("Today's agenda is");
+            viewPager.setCurrentItem(2);
+        } else {
+            Snacky.builder()
+                    .setActivty(MainActivity.this)
+                    .setText("Sorry, not supported right now")
+                    .warning().show();
+        }
+    }
+
+    private void SetSpeechListener()
+    {
+        mSpeechManager=new SpeechRecognizerManager(this, new SpeechRecognizerManager.onResultsReady() {
+            @Override
+            public void onResults(ArrayList<String> results) {
+
+
+
+                if(results!=null && results.size()>0)
+                {
+
+                    if(results.size()==1)
+                    {
+                        mSpeechManager.destroy();
+                        mSpeechManager = null;
+//                        result_tv.setText(results.get(0));
+                    }
+                    else {
+                        StringBuilder sb = new StringBuilder();
+                        if (results.size() > 5) {
+                            results = (ArrayList<String>) results.subList(0, 5);
+                        }
+                        for (String result : results) {
+                            sb.append(result).append("\n");
+                        }
+//                        result_tv.setText(sb.toString());
+                    }
+                }
+//                else
+//                    result_tv.setText(getString(R.string.no_results_found));
+            }
+        });
     }
 }
