@@ -281,6 +281,8 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
             mSpeechManager.destroy();
             SetSpeechListener();
         }
+
+        recognizer.startListening(KWS_SEARCH);
     }
 
     @Override
@@ -292,8 +294,15 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
         Log.d(TAG, "onPartialResult: " + text);
 //        Snacky.builder().setActivty(MainActivity.this).setText(text).success().show();
 
-        if(text.equals(KEYPHRASE)) listen();
-        else if(text.contains(KEYPHRASE)) listen();
+        if(text.equals(KEYPHRASE)) {
+            recognizer.stop();
+            listen();
+
+        }
+        else if(text.contains(KEYPHRASE)) {
+            recognizer.stop();
+            listen();
+        }
         else{
             Snacky.builder()
                     .setActivty(MainActivity.this)
@@ -318,14 +327,17 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
 
             Snacky.builder()
                     .setActivty(MainActivity.this)
-                    .setText(text)
+                    .setText("Result: "+ text)
                     .success().show();
         }
     }
 
     @Override
     public void onError(Exception e) {
-
+        Snacky.builder()
+                .setActivty(MainActivity.this)
+                .setText("Error in Speech recognizition")
+                .error().show();
     }
 
     @Override
@@ -409,8 +421,6 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
         mSpeechManager=new SpeechRecognizerManager(this, new SpeechRecognizerManager.onResultsReady() {
             @Override
             public void onResults(ArrayList<String> results) {
-
-
 
                 if(results!=null && results.size()>0)
                 {
