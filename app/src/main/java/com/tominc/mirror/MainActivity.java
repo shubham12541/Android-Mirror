@@ -275,6 +275,8 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
     }
 
     private void listen(){
+        Log.d(TAG, "listen: " + "Listening...");
+        recognizer.stop();
         if(mSpeechManager == null){
             SetSpeechListener();
         } else if(!mSpeechManager.ismIsListening()){
@@ -294,16 +296,9 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
         Log.d(TAG, "onPartialResult: " + text);
 //        Snacky.builder().setActivty(MainActivity.this).setText(text).success().show();
 
-        if(text.equals(KEYPHRASE)) {
-            recognizer.stop();
+        if(text.equals(KEYPHRASE) || text.equals(KEYPHRASE)) {
             listen();
-
-        }
-        else if(text.contains(KEYPHRASE)) {
-            recognizer.stop();
-            listen();
-        }
-        else{
+        } else{
             Snacky.builder()
                     .setActivty(MainActivity.this)
                     .setText(text)
@@ -329,6 +324,8 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
                     .setActivty(MainActivity.this)
                     .setText("Result: "+ text)
                     .success().show();
+
+//            listen();
         }
     }
 
@@ -381,6 +378,7 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
 
     private void processSpeech(String text){
         text = text.toLowerCase();
+        Log.d(TAG, "processSpeech: " + text);
         if(text.contains("music")){
             Snacky.builder()
                     .setActivty(MainActivity.this)
@@ -424,23 +422,32 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
 
                 if(results!=null && results.size()>0)
                 {
-
+                    Log.d(TAG, "onResults: " + "setSpeechListener " + results.size() + " " + results.get(0));
                     if(results.size()==1)
                     {
                         mSpeechManager.destroy();
                         mSpeechManager = null;
+                        processSpeech(results.get(0));
 //                        result_tv.setText(results.get(0));
                     }
                     else {
+
                         StringBuilder sb = new StringBuilder();
                         if (results.size() > 5) {
                             results = (ArrayList<String>) results.subList(0, 5);
                         }
+
                         for (String result : results) {
                             sb.append(result).append("\n");
                         }
+                        processSpeech(sb.toString());
 //                        result_tv.setText(sb.toString());
                     }
+                } else{
+                    Snacky.builder()
+                            .setActivty(MainActivity.this)
+                            .setText("No result found")
+                            .warning().show();
                 }
 //                else
 //                    result_tv.setText(getString(R.string.no_results_found));

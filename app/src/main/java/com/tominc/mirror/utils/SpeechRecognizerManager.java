@@ -12,6 +12,7 @@ import android.speech.SpeechRecognizer;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 /**
  * Created by shubham on 23/07/17.
@@ -25,16 +26,11 @@ public class SpeechRecognizerManager {
     protected boolean mIsListening;
     private boolean mIsStreamSolo;
 
-
-    private boolean mMute=true;
-
-
+    private boolean mMute=false;
 
     private final static String TAG="SpeechRecognizerManager";
 
     private onResultsReady mListener;
-
-
 
     public SpeechRecognizerManager(Context context, onResultsReady listener)
     {
@@ -45,12 +41,15 @@ public class SpeechRecognizerManager {
         {
             Log.e(TAG,e.toString());
         }
+        Log.d(TAG, "SpeechRecognizerManager: Initializing Speech Recognizer Manager");
         mAudioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
         mSpeechRecognizer = SpeechRecognizer.createSpeechRecognizer(context);
         mSpeechRecognizer.setRecognitionListener(new SpeechRecognitionListener());
         mSpeechRecognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         mSpeechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+                RecognizerIntent.LANGUAGE_MODEL_WEB_SEARCH);
+        mSpeechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE, "en-US");
+//        mSpeechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.US);
         mSpeechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE,
                 context.getPackageName());
         startListening();
@@ -101,8 +100,8 @@ public class SpeechRecognizerManager {
         Log.d(TAG, "onDestroy");
         if (mSpeechRecognizer != null)
         {
-            mSpeechRecognizer.stopListening();
-            mSpeechRecognizer.cancel();
+//            mSpeechRecognizer.stopListening();
+//            mSpeechRecognizer.cancel();
             mSpeechRecognizer.destroy();
             mSpeechRecognizer=null;
         }
