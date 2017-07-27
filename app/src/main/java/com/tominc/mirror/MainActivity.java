@@ -377,6 +377,20 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
     }
 
     private void processSpeech(String text){
+        if(text.equals("STOPPED LISTENING")){
+            Snacky.builder()
+                    .setActivty(MainActivity.this)
+                    .setText("Network error")
+                    .error().show();
+            return;
+        } else if(text.equals("ERROR RECOGNIZER BUSY")){
+            Snacky.builder()
+                    .setActivty(MainActivity.this)
+                    .setText("Recognizer Busy")
+                    .warning().show();
+            return;
+        }
+
         text = text.toLowerCase();
         Log.d(TAG, "processSpeech: " + text);
         if(text.contains("music")){
@@ -428,7 +442,6 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
                         mSpeechManager.destroy();
                         mSpeechManager = null;
                         processSpeech(results.get(0));
-//                        result_tv.setText(results.get(0));
                     }
                     else {
 
@@ -441,7 +454,6 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
                             sb.append(result).append("\n");
                         }
                         processSpeech(sb.toString());
-//                        result_tv.setText(sb.toString());
                     }
                 } else{
                     Snacky.builder()
@@ -449,8 +461,6 @@ public class MainActivity extends AppCompatActivity implements RecognitionListen
                             .setText("No result found")
                             .warning().show();
                 }
-//                else
-//                    result_tv.setText(getString(R.string.no_results_found));
             }
         });
     }

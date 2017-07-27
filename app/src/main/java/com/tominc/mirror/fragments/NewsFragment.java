@@ -31,6 +31,8 @@ public class NewsFragment extends Fragment {
     TextView news_list;
     Utility utility;
 
+    public static String static_news_text;
+
 
     public static NewsFragment newInstance() {
 
@@ -73,6 +75,7 @@ public class NewsFragment extends Fragment {
                     JSONArray articles = response.getJSONArray("articles");
 
                     String news_text ="";
+                    static_news_text="Today's headlines from The Verge are ";
 
                     for(int i=0;i<articles.length();i++){
                         JSONObject article = (JSONObject) articles.get(i);
@@ -83,6 +86,10 @@ public class NewsFragment extends Fragment {
                         newt.setUrl(article.getString("url"));
                         newt.setUrlToImage(article.getString("urlToImage"));
                         newt.setPublishedOn(article.getString("publishedAt"));
+
+                        if(i<articles.length()/3){
+                            static_news_text += newt.getTitle() + ". ";
+                        }
 
                         news_text += newt.getTitle() + "\n";
                     }

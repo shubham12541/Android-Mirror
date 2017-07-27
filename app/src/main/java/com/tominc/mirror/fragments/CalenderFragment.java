@@ -38,6 +38,7 @@ public class CalenderFragment extends Fragment {
     private static final String TAG = "CalenderFragment";
     private static final int CALENDER_PERMISSION = 102;
 
+    public static String static_calender_text;
 
     public static CalenderFragment newInstance() {
 
@@ -105,8 +106,10 @@ public class CalenderFragment extends Fragment {
         Calendar endOfToday = Calendar.getInstance();
         endOfToday.set(Calendar.HOUR_OF_DAY, 23);
         List<EventInfo> todayEvents = EventInfo.getEvents(getActivity(), today.getTime(), endOfToday.getTime(), null, null);
+        static_calender_text="Today's Agenda is ";
         for(EventInfo event: todayEvents){
             agenda_text += event.getTitle() + "<br>";
+            static_calender_text += event.getTitle() + ". ";
         }
 
         agenda_text += "<b>Tommorrow</b><br>";

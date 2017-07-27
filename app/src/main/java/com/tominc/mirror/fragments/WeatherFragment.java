@@ -35,6 +35,8 @@ public class WeatherFragment extends Fragment {
     Utility utility;
     private static final String TAG = "WeatherFragment";
 
+    public static String weather_text;
+
 
     public static WeatherFragment newInstance() {
         
@@ -186,5 +188,8 @@ public class WeatherFragment extends Fragment {
         weather_humidity.setText("Humidity: " + weather.getRelative_humidity());
         weather_visibility.setText("Visibility: " + weather.getVisibility_km() + " Km");
         weather_elevation.setText("ELevation: " + weather.getOb_elevation());
+
+
+        weather_text += "Its " + weather.getWeather() + " today and current temperature is " + weather.getTemp_c() + " degree calcius";
     }
 }
